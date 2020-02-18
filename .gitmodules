@@ -7,3 +7,6 @@
 [submodule "plugins/fast-syntax-highlighting"]
 	path = plugins/fast-syntax-highlighting
 	url = https://github.com/zdharma/fast-syntax-highlighting.git
+[submodule "prompts/powerlevel10k"]
+	path = prompts/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
