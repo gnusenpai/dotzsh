@@ -34,3 +34,11 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 
 alias ls='exa'
 alias la='ls -la'
+
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[3~' delete-char
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
