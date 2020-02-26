@@ -37,6 +37,7 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 alias ls='exa'
 alias la='ls -la'
 
+bindkey -e
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
 bindkey '^[[3~' delete-char
