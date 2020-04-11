@@ -34,6 +34,8 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 alias ls='exa'
 alias la='ls -la'
 alias grep='grep --color=auto'
+alias xin='xclip -sel c'
+alias xout='xclip -sel c -o'
 
 bindkey -e
 bindkey '^[[H' beginning-of-line
