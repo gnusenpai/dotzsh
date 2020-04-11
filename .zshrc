@@ -33,6 +33,7 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 
 alias ls='exa'
 alias la='ls -la'
+alias grep='grep --color=auto'
 
 bindkey -e
 bindkey '^[[H' beginning-of-line
