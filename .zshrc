@@ -37,6 +37,28 @@ alias grep='grep --color=auto'
 alias xin='xclip -sel c'
 alias xout='xclip -sel c -o'
 
+e() {
+    rg -uu --files 2> /dev/null |
+    sed '/.git\//d' |
+    fzf --layout=reverse --height=33% |
+    xargs -r $EDITOR
+}
+
+se() {
+    rg -uu --files ~/bin ~/.config ~/.zsh 2> /dev/null |
+    sed 's|/home/josh|~|' |
+    fzf --layout=reverse --height=33% |
+    sed 's|~|/home/josh|' |
+    xargs -r $EDITOR
+}
+
+fd() {
+    dir=$(find -type d -print 2> /dev/null |
+        sed 's|^./||; /.git/d' |
+        fzf --layout=reverse --height=50%) &&
+    pushd "$dir"
+}
+
 bindkey -e
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
