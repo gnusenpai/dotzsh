@@ -16,6 +16,7 @@ export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 setopt appendhistory
 setopt incappendhistory
 setopt sharehistory
+setopt autocd
 
 autoload -Uz compinit
 compinit -C
