@@ -62,6 +62,14 @@ fd() {
     pushd "$dir"
 }
 
+zupdate() {
+    compinit
+    find $ZDOTDIR -type f -name "*.zsh" | xargs -r -I '%' zsh -c 'zcompile %'
+    for f in .zcompdump .zprofile .zshenv .zshrc; do
+        zcompile $ZDOTDIR/$f
+    done
+}
+
 bindkey -e
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
