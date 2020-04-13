@@ -14,6 +14,7 @@ export SAVEHIST=$HISTSIZE
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 setopt appendhistory
+setopt histignorespace
 setopt incappendhistory
 setopt sharehistory
 setopt autocd
