@@ -43,14 +43,14 @@ alias xout='xclip -sel c -o'
 e() {
     rg -uu --files 2> /dev/null |
     sed '/.git\//d' |
-    fzf --layout=reverse --height=33% |
+    fzf --layout=reverse --height=33% --color=16 |
     xargs -r $EDITOR
 }
 
 se() {
     rg -uu --files ~/bin ~/.config ~/.zsh 2> /dev/null |
     sed 's|/home/josh|~|' |
-    fzf --layout=reverse --height=33% |
+    fzf --layout=reverse --height=33% --color=16 |
     sed 's|~|/home/josh|' |
     xargs -r $EDITOR
 }
@@ -58,7 +58,7 @@ se() {
 fd() {
     dir=$(find -type d -print 2> /dev/null |
         sed 's|^./||; /.git/d' |
-        fzf --layout=reverse --height=50%) &&
+        fzf --layout=reverse --height=50% --color=16) &&
     pushd "$dir"
 }
 
