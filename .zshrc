@@ -34,6 +34,7 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.zsh/.p10k.zsh.
 [[ ! -f ~/.zsh/.p10k.zsh ]] || source ~/.zsh/.p10k.zsh
 
+alias e='$EDITOR'
 alias ls='exa'
 alias la='ls -la'
 alias grep='grep --color=auto'
