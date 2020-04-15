@@ -40,7 +40,7 @@ alias grep='grep --color=auto'
 alias xin='xclip -sel c'
 alias xout='xclip -sel c -o'
 
-e() {
+fe() {
     rg -uu --files 2> /dev/null |
     sed '/.git\//d' |
     fzf --layout=reverse --height=33% --color=16 |
