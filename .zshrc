@@ -38,6 +38,7 @@ alias e='$EDITOR'
 alias ls='exa'
 alias la='ls -la'
 alias grep='grep --color=auto'
+alias qr='qrencode -t utf8'
 alias xin='xclip -sel c'
 alias xout='xclip -sel c -o'
 
