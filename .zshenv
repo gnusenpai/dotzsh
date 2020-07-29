@@ -18,4 +18,4 @@ export RUSTUP_HOME=$XDG_DATA_HOME/rustup
 export WGETRC=$XDG_CONFIG_HOME/wgetrc
 
 typeset -U path
-path=($HOME/bin $CARGO_HOME/bin $path)
+path=($HOME/bin $CARGO_HOME/bin $HOME/.local/bin $path)
