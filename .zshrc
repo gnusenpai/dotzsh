@@ -12,6 +12,7 @@ export HISTSIZE=32768
 export SAVEHIST=$HISTSIZE
 
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+export ZLE_REMOVE_SUFFIX_CHARS=""
 
 setopt appendhistory
 setopt histignorealldups
