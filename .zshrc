@@ -43,14 +43,14 @@ alias qr='qrencode -t utf8'
 alias xin='xclip -sel c'
 alias xout='xclip -sel c -o'
 
-fe() {
+function fe {
     rg -uu --files 2> /dev/null |
     sed '/.git\//d' |
     fzf --layout=reverse --height=33% --color=16 |
     xargs -r $EDITOR
 }
 
-se() {
+function se {
     rg -uu --files ~/bin ~/.config ~/.zsh 2> /dev/null |
     sed 's|/home/josh|~|' |
     fzf --layout=reverse --height=33% --color=16 |
@@ -58,14 +58,14 @@ se() {
     xargs -r $EDITOR
 }
 
-fd() {
+function fd {
     dir=$(find -type d -print 2> /dev/null |
         sed 's|^./||; /.git/d' |
         fzf --layout=reverse --height=50% --color=16) &&
     pushd "$dir"
 }
 
-zupdate() {
+function zupdate {
     compinit
     find $ZDOTDIR -type f -name "*.zsh" | xargs -r -I '%' zsh -c 'zcompile %'
     for f in .zcompdump .zprofile .zshenv .zshrc; do
