@@ -1,6 +1,6 @@
 export ZDOTDIR=$HOME/.zsh
 export EDITOR=nvim
-export PAGER=most
+export PAGER=less
 export SXHKD_SHELL=dash
 export QT_QPA_PLATFORMTHEME=gtk2
 
