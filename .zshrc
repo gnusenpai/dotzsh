@@ -37,7 +37,7 @@ source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
 
 alias e='$EDITOR'
 alias ls='exa'
-alias la='ls -la'
+alias la='ls -lab'
 alias grep='grep --color=auto'
 alias qr='qrencode -t utf8'
 alias xin='xclip -sel c'
