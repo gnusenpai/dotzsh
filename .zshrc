@@ -44,7 +44,7 @@ alias xin='xclip -sel c'
 alias xout='xclip -sel c -o'
 
 function fe {
-    rg -uu --files 2> /dev/null |
+    rg -uu --files $1 2> /dev/null |
     sed '/.git\//d' |
     fzf --layout=reverse --height=33% --color=16 |
     xargs -r $EDITOR
@@ -59,7 +59,7 @@ function se {
 }
 
 function fd {
-    dir=$(find -type d -print 2> /dev/null |
+    dir=$(find $1 -type d -print 2> /dev/null |
         sed 's|^./||; /.git/d' |
         fzf --layout=reverse --height=50% --color=16) &&
     pushd "$dir"
