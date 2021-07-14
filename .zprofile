@@ -13,6 +13,6 @@ fi
 if [ "$HOST" = djentoo ]; then
     source $ZDOTDIR/.zshenv
     if [ "$(tty)" = "/dev/tty1" ]; then
-        exec startx -- vt1
+        exec sx
     fi
 fi
