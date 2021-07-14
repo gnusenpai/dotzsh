@@ -38,7 +38,7 @@
     # =========================[ Line #1 ]=========================
     context                 # user@hostname
     dir                     # current directory
-    vcs                     # git status
+    #vcs                     # git status
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
