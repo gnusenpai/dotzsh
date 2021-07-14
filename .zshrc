@@ -77,6 +77,22 @@ function mem {
     ps -eo rss,pid,euser,args:100 --sort %mem | grep -v grep | grep -i $@ | awk '{printf $1/1024 "MB"; $1=""; print }'
 }
 
+function vfio_search {
+    lspci -k | grep -v "Subsystem\|modules" | grep -i "$1"
+}
+
+function vfio_attach {
+    virsh nodedev-reattach --device pci_0000_"$(lspci | grep -i "$1" | cut -d' ' -f1 | sed -E 's/(:|\.)/_/g')"
+}
+
+function vfio_detach {
+    virsh nodedev-detach --device pci_0000_"$(lspci | grep -i "$1" | cut -d' ' -f1 | sed -E 's/(:|\.)/_/g')"
+}
+
+function vfio_list {
+    lspci -nnk | grep -B2 vfio-pci
+}
+
 bindkey -e
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
