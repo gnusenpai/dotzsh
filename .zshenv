@@ -3,6 +3,7 @@ export EDITOR=nvim
 export PAGER=less
 export SXHKD_SHELL=dash
 export QT_QPA_PLATFORMTHEME=gtk2
+export NO_AT_BRIDGE=1
 
 if test -z "${XDG_RUNTIME_DIR}"; then
     export XDG_RUNTIME_DIR=/tmp/${UID}-runtime-dir
