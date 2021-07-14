@@ -8,7 +8,7 @@ fi
 [ -f "$XDG_CONFIG_HOME/wpg/sequences" ] && (cat $XDG_CONFIG_HOME/wpg/sequences &)
 
 export HISTFILE="$ZDOTDIR/.zhistory"
-export HISTSIZE=32768
+export HISTSIZE=65535
 export SAVEHIST=$HISTSIZE
 
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
