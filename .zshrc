@@ -65,6 +65,10 @@ function fd {
     pushd "$dir"
 }
 
+function zclean {
+    find $ZDOTDIR -type f -name "*.zwc" -print -delete
+}
+
 function zupdate {
     compinit
     find $ZDOTDIR -type f -name "*.zsh" | xargs -r -I '%' zsh -c 'zcompile %'
