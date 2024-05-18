@@ -35,7 +35,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Plugins
 source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source "$ZDOTDIR/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+source "$ZDOTDIR/plugins/F-Sy-H/F-Sy-H.plugin.zsh"
 source "$ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
 # grc (Generic Colouriser) integration

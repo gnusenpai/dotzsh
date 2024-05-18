@@ -4,6 +4,6 @@
 [submodule "plugins/zsh-autosuggestions"]
 	path = plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule "plugins/fast-syntax-highlighting"]
-	path = plugins/fast-syntax-highlighting
-	url = https://github.com/zdharma/fast-syntax-highlighting.git
+[submodule "plugins/F-Sy-H"]
+	path = plugins/F-Sy-H
+	url = https://github.com/z-shell/F-Sy-H.git
