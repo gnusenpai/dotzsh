@@ -80,19 +80,9 @@ if command -v fzf >/dev/null; then
         pushd "$dir" || return 1
     }
 
-    if ! [ -f "${ZDOTDIR}/plugins/fzf.zsh" ]; then
-        if [ -f /usr/share/fzf/key-bindings.zsh ]; then
-            cp /usr/share/fzf/key-bindings.zsh "${ZDOTDIR}/plugins/fzf.zsh"
-        elif [ -f /usr/share/fzf/shell/key-bindings.zsh ]; then
-            cp /usr/share/fzf/shell/key-bindings.zsh "${ZDOTDIR}/plugins/fzf.zsh"
-        elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
-            cp /usr/share/doc/fzf/examples/key-bindings.zsh "${ZDOTDIR}/plugins/fzf.zsh"
-        else
-            fzf --zsh > "${ZDOTDIR}/plugins/fzf.zsh"
-        fi
-        zcompile "${ZDOTDIR}/plugins/fzf.zsh"
+    if [ -f "${ZDOTDIR}/plugins/fzf.zsh" ]; then
+        source "${ZDOTDIR}/plugins/fzf.zsh"
     fi
-    source "${ZDOTDIR}/plugins/fzf.zsh"
 fi
 
 
