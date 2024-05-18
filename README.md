@@ -14,7 +14,7 @@ zupdate
 
 Optionally, delete my customizations if you want to bring your own:
 ``` sh
-rm ~/.zsh/*/gnusenpai.zsh
+rm ~/.zsh/*.d/gnusenpai.zsh
 ```
 
 ## Usage
