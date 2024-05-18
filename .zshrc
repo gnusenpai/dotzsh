@@ -1,110 +1,134 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zsh/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# This absolutely has to be at the top...
+export GPG_TTY=$(tty)
 
-[ -f "$XDG_CONFIG_HOME/wpg/sequences" ] && (cat $XDG_CONFIG_HOME/wpg/sequences &)
-
-export HISTFILE="$ZDOTDIR/.zhistory"
-export HISTSIZE=65535
-export SAVEHIST=$HISTSIZE
-
-export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-export ZLE_REMOVE_SUFFIX_CHARS=""
+# History settings
+HISTFILE="$ZDOTDIR/.zhistory"
+HISTSIZE=1048576
+SAVEHIST=$HISTSIZE
 
 setopt appendhistory
 setopt histignorealldups
 setopt histignorespace
 setopt incappendhistory
 setopt sharehistory
+
+# Misc ZSH settings
+WORDCHARS=${WORDCHARS/\/}
+ZLE_REMOVE_SUFFIX_CHARS=""
+REPORTTIME=1
+
 setopt autocd
 
-autoload -Uz compinit
-compinit -C
+# Completion
+autoload -Uz compinit bashcompinit
+compinit
+bashcompinit
 
 zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZDOTDIR/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+# TODO: save this to a pseudo-temporary file to limit forking.
+if [ -z "${LS_COLORS}" ] && command -v dircolors >/dev/null; then
+    eval "$(dircolors)"
+fi
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
-source $ZDOTDIR/prompts/powerlevel10k/powerlevel10k.zsh-theme
+# Plugins
+source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$ZDOTDIR/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+source "$ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
-# To customize prompt, run `p10k configure` or edit ~/.zsh/.p10k.zsh.
-[[ ! -f ~/.zsh/.p10k.zsh ]] || source ~/.zsh/.p10k.zsh
+# grc (Generic Colouriser) integration
+for i in "/etc/grc.zsh" "/usr/share/grc/grc.zsh"; do
+    if [ -f $i ]; then
+        source $i
+        unset -f make
+        break
+    fi
+done
 
-alias e='$EDITOR'
-alias ls='exa'
-alias la='ls -lab'
+# Prompt customization
+function precmd() {
+    # shellcheck disable=SC2317
+    function precmd() {
+        # This fixes the cursor after using programs like vim in normal terminals
+        if [ -z "$INSIDE_EMACS" ]; then
+            printf '\e[5 q'
+        fi
+        echo
+    }
+}
+
+if command -v ip >/dev/null; then
+    _netns=$(ip netns identify)
+    if [ -n "$_netns" ]; then
+        _netns="in $_netns "
+    fi
+fi
+
+PS1='%n@%m '"$_netns"'%F{4}%~%f %(?..%F{1}%?%f)
+%(?.%F{2}%(!.#.>)%f.%F{1}%(!.#.>)%f) '
+
+if [ "$INSIDE_EMACS" = "vterm" ]; then
+    source "$ZDOTDIR/plugins/vterm.zsh"
+fi
+
+# Global aliases
+alias la='ls -la'
 alias grep='grep --color=auto'
-alias qr='qrencode -t utf8'
-alias xin='xclip -sel c'
-alias xout='xclip -sel c -o'
 
-function fe {
-    rg -uu --files $1 2> /dev/null |
-    sed '/.git\//d' |
-    fzf --layout=reverse --height=33% --color=16 |
-    xargs -r $EDITOR
+# ZSH Housekeeping
+function zclean() {
+    if [ -d "${ZDOTDIR}" ]; then
+        echo "Removing:"
+        pushd "${ZDOTDIR}" >/dev/null
+        find . -type f -name "*.zwc" -delete -print | sed 's|^\./| |'
+        popd >/dev/null
+    else
+        echo "Something went really wrong!"
+        echo "Aborting to protect your files."
+        return 1
+    fi
 }
 
-function se {
-    rg -uu --files ~/bin ~/.config ~/.zsh 2> /dev/null |
-    sed 's|/home/josh|~|' |
-    fzf --layout=reverse --height=33% --color=16 |
-    sed 's|~|/home/josh|' |
-    xargs -r $EDITOR
+function zupdate() {
+    if [ -d "${ZDOTDIR}" ]; then
+        compinit
+        bashcompinit
+
+        echo "Compiling:"
+        pushd "${ZDOTDIR}" >/dev/null
+        for file in .zshenv .zprofile .zshrc .zlogin .zcompdump \
+            $(find . -type f -name "*.zsh" -print | sed 's|^\./||')
+        do
+            echo " ${file}"
+            zcompile "${ZDOTDIR}/${file}"
+        done
+        popd >/dev/null
+
+        zsh -i -c builtin exit
+    else
+        echo "Something went really wrong!"
+        echo "Aborting to protect your files."
+        return 1
+    fi
 }
 
-function fd {
-    dir=$(find $1 -type d -print 2> /dev/null |
-        sed 's|^./||; /.git/d' |
-        fzf --layout=reverse --height=50% --color=16) &&
-    pushd "$dir"
-}
-
-function zclean {
-    find $ZDOTDIR -type f -name "*.zwc" -print -delete
-}
-
-function zupdate {
-    compinit
-    find $ZDOTDIR -type f -name "*.zsh" | xargs -r -I '%' zsh -c 'zcompile %'
-    for f in .zcompdump .zprofile .zshenv .zshrc; do
-        zcompile $ZDOTDIR/$f
-    done
-}
-
-function mem {
-    ps -eo rss,pid,euser,args:100 --sort %mem | grep -v grep | grep -i $@ | awk '{printf $1/1024 "MB"; $1=""; print }'
-}
-
-function vfio_search {
-    lspci -k | grep -v "Subsystem\|modules" | grep -i "$1"
-}
-
-function vfio_attach {
-    virsh nodedev-reattach --device pci_0000_"$(lspci | grep -i "$1" | cut -d' ' -f1 | sed -E 's/(:|\.)/_/g')"
-}
-
-function vfio_detach {
-    virsh nodedev-detach --device pci_0000_"$(lspci | grep -i "$1" | cut -d' ' -f1 | sed -E 's/(:|\.)/_/g')"
-}
-
-function vfio_list {
-    lspci -nnk | grep -B2 vfio-pci
-}
-
+# Keybinds
 bindkey -e
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
-bindkey '^[[1~' beginning-of-line
-bindkey '^[[4~' end-of-line
-bindkey '^[[3~' delete-char
-bindkey '^[[3;5~' delete-word
-bindkey '^[[1;5D' backward-word
-bindkey '^[[1;5C' forward-word
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+bindkey '^H'      backward-kill-word            # Ctrl+Backspace
+bindkey '^[[H'    beginning-of-line             # Home
+bindkey '^[[F'    end-of-line                   # End
+bindkey '^[[1~'   beginning-of-line             # TTY Home
+bindkey '^[[4~'   end-of-line                   # TTY End
+bindkey '^[[3~'   delete-char                   # Delete
+bindkey '^[[3;5~' delete-word                   # Ctrl+Delete
+bindkey '^[[1;5D' backward-word                 # Ctrl+Left
+bindkey '^[[1;5C' forward-word                  # Ctrl+Right
+bindkey '^[[A'    history-substring-search-up   # Up
+bindkey '^[[B'    history-substring-search-down # Down
+
+# Source custom configuration in rc.d
+for rc in "$ZDOTDIR/rc.d/"*.zsh(N); do
+    source $rc
+done

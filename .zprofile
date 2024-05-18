@@ -1,18 +1,6 @@
-HOST=$(hostname)
+source "${ZDOTDIR}/.zshenv"
 
-if [ "$HOST" = arch ]; then
-    if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-        if lspci -nk | grep "Kernel driver in use: nvidia" > /dev/null; then
-            exec startx -- -config xorg.nvidia.conf
-        else
-            exec startx
-        fi
-    fi
-fi
-
-if [ "$HOST" = djentoo ]; then
-    source $ZDOTDIR/.zshenv
-    if [ "$(tty)" = "/dev/tty1" ]; then
-        exec sx
-    fi
-fi
+# Source custom configuration in profile.d
+for profile in "$ZDOTDIR/profile.d/"*.zsh(N); do
+    source $profile
+done
