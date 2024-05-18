@@ -93,7 +93,6 @@ if command -v fzf >/dev/null; then
         zcompile "${ZDOTDIR}/plugins/fzf.zsh"
     fi
     source "${ZDOTDIR}/plugins/fzf.zsh"
-    bindkey '^[c' capitalize-word
 fi
 
 
