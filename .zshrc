@@ -26,12 +26,7 @@ bashcompinit
 
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-
-# TODO: save this to a pseudo-temporary file to limit forking.
-if [ -z "${LS_COLORS}" ] && command -v dircolors >/dev/null; then
-    eval "$(dircolors)"
-fi
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:default' list-colors ''
 
 # Plugins
 source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
