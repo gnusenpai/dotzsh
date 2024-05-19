@@ -1,4 +1,3 @@
-### key-bindings.zsh ###
 #     ____      ____
 #    / __/___  / __/
 #   / /_/_  / / /_
@@ -42,9 +41,13 @@ fi
 
 # CTRL-T - Paste the selected file path(s) into the command line
 __fsel() {
+  local cmd="${FZF_CTRL_T_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/.*' \\) -prune \
+    -o -type f -print \
+    -o -type d -print \
+    -o -type l -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
-  FZF_DEFAULT_COMMAND=${FZF_CTRL_T_COMMAND:-} FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --walker=file,dir,follow,hidden --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" < /dev/tty | while read item; do
+  eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_T_OPTS-}" $(__fzfcmd) -m "$@" | while read item; do
     echo -n "${(q)item} "
   done
   local ret=$?
@@ -63,49 +66,45 @@ fzf-file-widget() {
   zle reset-prompt
   return $ret
 }
-if [[ "${FZF_CTRL_T_COMMAND-x}" != "" ]]; then
-  zle     -N            fzf-file-widget
-  bindkey -M emacs '^T' fzf-file-widget
-  bindkey -M vicmd '^T' fzf-file-widget
-  bindkey -M viins '^T' fzf-file-widget
-fi
+zle     -N            fzf-file-widget
+bindkey -M emacs '^T' fzf-file-widget
+bindkey -M vicmd '^T' fzf-file-widget
+bindkey -M viins '^T' fzf-file-widget
 
 # ALT-C - cd into the selected directory
 fzf-cd-widget() {
+  local cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
+    -o -type d -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail no_aliases 2> /dev/null
-  local dir="$(FZF_DEFAULT_COMMAND=${FZF_ALT_C_COMMAND:-} FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --walker=dir,follow,hidden --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m < /dev/tty)"
+  local dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
   if [[ -z "$dir" ]]; then
     zle redisplay
     return 0
   fi
   zle push-line # Clear buffer. Auto-restored on next prompt.
-  BUFFER="builtin cd -- ${(q)dir:a}"
+  BUFFER="builtin cd -- ${(q)dir}"
   zle accept-line
   local ret=$?
   unset dir # ensure this doesn't end up appearing in prompt expansion
   zle reset-prompt
   return $ret
 }
-if [[ "${FZF_ALT_C_COMMAND-x}" != "" ]]; then
-  zle     -N             fzf-cd-widget
-  bindkey -M emacs '\ec' fzf-cd-widget
-  bindkey -M vicmd '\ec' fzf-cd-widget
-  bindkey -M viins '\ec' fzf-cd-widget
-fi
+zle     -N             fzf-cd-widget
+bindkey -M emacs '\ec' fzf-cd-widget
+bindkey -M vicmd '\ec' fzf-cd-widget
+bindkey -M viins '\ec' fzf-cd-widget
 
 # CTRL-R - Paste the selected command from history into the command line
 fzf-history-widget() {
   local selected num
   setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2> /dev/null
-  selected="$(fc -rl 1 | awk '{ cmd=$0; sub(/^[ \t]*[0-9]+\**[ \t]+/, "", cmd); if (!seen[cmd]++) print $0 }' |
-    FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} ${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind=ctrl-r:toggle-sort,ctrl-z:ignore ${FZF_CTRL_R_OPTS-} --query=${(qqq)LBUFFER} +m" $(__fzfcmd))"
+  selected=( $(fc -rl 1 | awk '{ cmd=$0; sub(/^[ \t]*[0-9]+\**[ \t]+/, "", cmd); if (!seen[cmd]++) print $0 }' |
+    FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} ${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind=ctrl-r:toggle-sort,ctrl-z:ignore ${FZF_CTRL_R_OPTS-} --query=${(qqq)LBUFFER} +m" $(__fzfcmd)) )
   local ret=$?
   if [ -n "$selected" ]; then
-    num=$(awk '{print $1}' <<< "$selected")
-    if [[ "$num" =~ '^[1-9][0-9]*\*?$' ]]; then
-      zle vi-fetch-history -n ${num%\*}
-    else # selected is a custom query, not from history
-      LBUFFER="$selected"
+    num=$selected[1]
+    if [ -n "$num" ]; then
+      zle vi-fetch-history -n $num
     fi
   fi
   zle reset-prompt
@@ -120,8 +119,6 @@ bindkey -M viins '^R' fzf-history-widget
   eval $__fzf_key_bindings_options
   'unset' '__fzf_key_bindings_options'
 }
-### end: key-bindings.zsh ###
-### completion.zsh ###
 #     ____      ____
 #    / __/___  / __/
 #   / /_/_  / / /_
@@ -201,19 +198,22 @@ fi
 {
 
 # To use custom commands instead of find, override _fzf_compgen_{path,dir}
-#
-#   _fzf_compgen_path() {
-#     echo "$1"
-#     command find -L "$1" \
-#       -name .git -prune -o -name .hg -prune -o -name .svn -prune -o \( -type d -o -type f -o -type l \) \
-#       -a -not -path "$1" -print 2> /dev/null | sed 's@^\./@@'
-#   }
-#
-#   _fzf_compgen_dir() {
-#     command find -L "$1" \
-#       -name .git -prune -o -name .hg -prune -o -name .svn -prune -o -type d \
-#       -a -not -path "$1" -print 2> /dev/null | sed 's@^\./@@'
-#   }
+if ! declare -f _fzf_compgen_path > /dev/null; then
+  _fzf_compgen_path() {
+    echo "$1"
+    command find -L "$1" \
+      -name .git -prune -o -name .hg -prune -o -name .svn -prune -o \( -type d -o -type f -o -type l \) \
+      -a -not -path "$1" -print 2> /dev/null | sed 's@^\./@@'
+  }
+fi
+
+if ! declare -f _fzf_compgen_dir > /dev/null; then
+  _fzf_compgen_dir() {
+    command find -L "$1" \
+      -name .git -prune -o -name .hg -prune -o -name .svn -prune -o -type d \
+      -a -not -path "$1" -print 2> /dev/null | sed 's@^\./@@'
+  }
+fi
 
 ###########################################################
 
@@ -269,19 +269,10 @@ __fzf_generic_path_completion() {
       leftover=${leftover/#\/}
       [ -z "$dir" ] && dir='.'
       [ "$dir" != "/" ] && dir="${dir/%\//}"
-      matches=$(
-        unset FZF_DEFAULT_COMMAND
-        export FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_COMPLETION_OPTS-}"
-        if declare -f "$compgen" > /dev/null; then
-          eval "$compgen $(printf %q "$dir")" | __fzf_comprun "$cmd" ${(Q)${(Z+n+)fzf_opts}} -q "$leftover"
-        else
-          [[ $compgen =~ dir ]] && walker=dir,follow || walker=file,dir,follow,hidden
-          __fzf_comprun "$cmd" ${(Q)${(Z+n+)fzf_opts}} -q "$leftover" --walker "$walker" --walker-root="$dir" < /dev/tty
-        fi | while read item; do
-          item="${item%$suffix}$suffix"
-          echo -n "${(q)item} "
-        done
-      )
+      matches=$(eval "$compgen $(printf %q "$dir")" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_COMPLETION_OPTS-}" __fzf_comprun "$cmd" ${(Q)${(Z+n+)fzf_opts}} -q "$leftover" | while read item; do
+        item="${item%$suffix}$suffix"
+        echo -n "${(q)item} "
+      done)
       matches=${matches% }
       if [ -n "$matches" ]; then
         LBUFFER="$lbuf$matches$tail"
@@ -475,4 +466,3 @@ bindkey '^I' fzf-completion
   eval $__fzf_completion_options
   'unset' '__fzf_completion_options'
 }
-### end: completion.zsh ###
