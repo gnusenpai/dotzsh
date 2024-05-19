@@ -81,6 +81,7 @@ if command -v fzf >/dev/null; then
     }
 
     if [ -f "${ZDOTDIR}/plugins/fzf.zsh" ]; then
+        export FZF_ALT_C_COMMAND="command find -L . -mindepth 1 -path '*/.*' -prune -o -type d -print 2> /dev/null | cut -b3-"
         source "${ZDOTDIR}/plugins/fzf.zsh"
     fi
 fi
