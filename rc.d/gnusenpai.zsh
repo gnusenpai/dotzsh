@@ -4,6 +4,7 @@ alias qr='qrencode -t utf8'
 if command -v eza >/dev/null; then
     alias ls='eza'
     alias la='ls -lab'
+    alias tree='ls -T'
 fi
 
 if command -v bat >/dev/null; then
