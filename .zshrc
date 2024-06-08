@@ -61,8 +61,20 @@ if command -v ip >/dev/null; then
     fi
 fi
 
-PS1='%n@%m '"$_netns"'%F{4}%~%f %(?..%F{1}%?%f)
-%(?.%F{2}%(!.#.>)%f.%F{1}%(!.#.>)%f) '
+# username@hostname
+PROMPT='%n@%m '
+# extra status
+PROMPT="${PROMPT}${_netns}"
+# current directory
+PROMPT="${PROMPT}"'%F{4}%~%f'
+# exit code (only show when non-zero)
+PROMPT="${PROMPT}"'%(?.. %F{1}%?%f)'
+# newline
+PROMPT="${PROMPT}"$'\n'
+# set prompt char color based on exit code
+PROMPT="${PROMPT}"'%(?.%F{2}.%F{1})'
+# prompt char (# on root, > on non-root)
+PROMPT="${PROMPT}"'%(!.#.>)%f '
 
 if [ "$INSIDE_EMACS" = "vterm" ]; then
     source "$ZDOTDIR/plugins/vterm.zsh"
