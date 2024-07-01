@@ -54,7 +54,7 @@ function precmd() {
     }
 }
 
-if command -v ip >/dev/null; then
+if command -v ip >/dev/null && ! ip 2>&1 | grep BusyBox >/dev/null; then
     _netns=$(ip netns identify)
     if [ -n "$_netns" ]; then
         _netns="in $_netns "
