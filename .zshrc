@@ -54,6 +54,12 @@ function precmd() {
     }
 }
 
+if [ -f "${ZDOTDIR}/hostname" ]; then
+    _hostname="$(<"${ZDOTDIR}/hostname")"
+else
+    _hostname='%m'
+fi
+
 if command -v ip >/dev/null && ! ip 2>&1 | grep BusyBox >/dev/null; then
     _netns=$(ip netns identify)
     if [ -n "$_netns" ]; then
@@ -62,7 +68,7 @@ if command -v ip >/dev/null && ! ip 2>&1 | grep BusyBox >/dev/null; then
 fi
 
 # username@hostname
-PROMPT='%n@%m '
+PROMPT="%n@${_hostname} "
 # extra status
 PROMPT="${PROMPT}${_netns}"
 # current directory
