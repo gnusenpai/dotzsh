@@ -3,7 +3,7 @@ alias qr='qrencode -t utf8'
 
 if command -v eza >/dev/null; then
     alias ls='eza'
-    alias la='ls -lab'
+    alias la='ls -lagb'
     alias tree='ls -T'
 fi
 
