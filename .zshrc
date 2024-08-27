@@ -37,7 +37,7 @@ source "$ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-sear
 for i in "/etc/grc.zsh" "/usr/share/grc/grc.zsh"; do
     if [ -f $i ]; then
         source $i
-        unset -f make
+        unset -f make 2>/dev/null
         break
     fi
 done
