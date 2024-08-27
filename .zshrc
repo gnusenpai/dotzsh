@@ -56,6 +56,8 @@ function precmd() {
 
 if [ -f "${ZDOTDIR}/hostname" ]; then
     _hostname="$(<"${ZDOTDIR}/hostname")"
+elif [ -n "${CONTAINER_ID}" ]; then
+    _hostname="${CONTAINER_ID}"
 else
     _hostname='%m'
 fi
