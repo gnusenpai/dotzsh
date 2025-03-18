@@ -13,7 +13,7 @@ zupdate
 ```
 
 Optionally, delete my customizations if you want to bring your own:
-``` sh
+```sh
 rm ~/.zsh/*.d/gnusenpai.zsh
 ```
 
@@ -26,7 +26,7 @@ zupdate
 ```
 
 To remove all bytecompiled (`.zwc`) and temporary files (mainly for development):
-``` sh
+```sh
 zclean
 ```
 
