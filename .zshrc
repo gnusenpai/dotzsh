@@ -14,6 +14,7 @@ setopt sharehistory
 
 # Misc ZSH settings
 WORDCHARS=${WORDCHARS/\/}
+WORDCHARS=${WORDCHARS/=}
 ZLE_REMOVE_SUFFIX_CHARS=""
 REPORTTIME=1
 
