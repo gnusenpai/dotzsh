@@ -49,3 +49,5 @@ vterm_prompt_end() {
 }
 setopt PROMPT_SUBST
 PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+
+bindkey '^[[127;5u' backward-kill-word # Ctrl+Backspace (vterm)
