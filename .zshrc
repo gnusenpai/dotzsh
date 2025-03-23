@@ -70,12 +70,24 @@ if command -v ip >/dev/null && ! ip 2>&1 | grep BusyBox >/dev/null; then
     fi
 fi
 
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' stagedstr '%F{10}+%f'
+zstyle ':vcs_info:*' unstagedstr '%F{11}*%f'
+zstyle ':vcs_info:git:*' formats ' %F{8}(%b%c%u%F{8})%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{8}(%F{9}%a%F{8}|%b%c%u%F{8})%f'
+precmd_functions+=( vcs_info )
+setopt prompt_subst
+
 # username@hostname
 PROMPT="%n@${_hostname} "
 # extra status
 PROMPT="${PROMPT}${_netns}"
 # current directory
 PROMPT="${PROMPT}"'%F{4}%~%f'
+# git
+PROMPT="${PROMPT}"\${vcs_info_msg_0_}
 # exit code (only show when non-zero)
 PROMPT="${PROMPT}"'%(?.. %F{1}%?%f)'
 # newline
