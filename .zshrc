@@ -152,7 +152,12 @@ function zclean() {
     if [ -d "${ZDOTDIR}" ]; then
         echo "Removing:"
         pushd "${ZDOTDIR}" >/dev/null
-        find . -type f -name "*.zwc" -delete -print | sed 's|^\./| |'
+        for file in tmp \
+            $(find . -type f -name "*.zwc" -print | sed 's|^\./||')
+        do
+            echo " ${file}"
+            rm -rf "${file}"
+        done
         popd >/dev/null
     else
         echo "Something went really wrong!"
