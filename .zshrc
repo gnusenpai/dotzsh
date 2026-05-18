@@ -28,6 +28,9 @@ bashcompinit
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*:default' list-colors ''
+zstyle ':completion:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*' list-separator ' '
+zstyle ':completion:*:options' list-colors '=(#b)(*[^ ]~*  *|)[ ]#(*)=31=32=33'
 
 # Plugins
 source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
