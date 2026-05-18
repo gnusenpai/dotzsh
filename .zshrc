@@ -37,8 +37,8 @@ source "$ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 FAST_WORK_DIR="$ZDOTDIR/plugins/F-Sy-H"
 source "$ZDOTDIR/plugins/F-Sy-H/F-Sy-H.plugin.zsh"
-if ! [ -f "$ZDOTDIR/plugins/F-Sy-H/current_theme.zsh" ]; then
-    fast-theme base16 >/dev/null 2>&1
+if ! [ -f "$ZDOTDIR/plugins/F-Sy-H/theme_overlay.zsh" ]; then
+    fast-theme "$ZDOTDIR/plugins/f-sy-h-overlay.ini" >/dev/null 2>&1
 fi
 
 source "$ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
@@ -161,6 +161,7 @@ function zclean() {
         for file in \
             plugins/F-Sy-H/current_theme.zsh \
             plugins/F-Sy-H/secondary_theme.zsh \
+            plugins/F-Sy-H/theme_overlay.zsh \
             $(find . -type f -name "*.zwc" -print | sed 's|^\./||')
         do
             echo " ${file}"
