@@ -1,3 +1,18 @@
+if [ -n "$INSIDE_EMACS" ]; then
+    export EDITOR=emacsclient
+else
+    export EDITOR=vi
+fi
+export VISUAL=$EDITOR
+export PAGER=less
+
+if command -v gpgconf >/dev/null; then
+    SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    export SSH_AUTH_SOCK
+fi
+export FZF_DEFAULT_OPTS="--layout=reverse --height=33% --color=16"
+export WINEDLLOVERRIDES=winemenubuilder.exe=d
+
 if [ "$HOST" = djentoo ] && [ "$(tty)" = "/dev/tty2" ]; then
     if [ -s "${HOME}/.session" ]; then
         case $(<"${HOME}/.session") in
