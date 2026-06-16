@@ -3,6 +3,8 @@ case ${PATH} in
     *) PATH=${HOME}/bin:${HOME}/.local/bin:${HOME}/.cargo/bin:${PATH};;
 esac
 
+export XCURSOR_PATH=${HOME}/.local/share/icons:${XCURSOR_PATH}
+
 if [ -n "$INSIDE_EMACS" ]; then
     export EDITOR=emacsclient
 else
